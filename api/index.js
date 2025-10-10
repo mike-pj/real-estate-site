@@ -15,6 +15,9 @@ mongoose.connect(process.env.MONGO_URL)
 
 const app = express();
 
+// helps to get data from req.body
+app.use(express.json());
+
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 
