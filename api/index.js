@@ -25,3 +25,14 @@ app.listen(4000, () => {
   console.log('Server is running on port 4000!');
 }
 ); 
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+    return res.status(statusCode).json({
+      success: false,
+      statusCode: statusCode,
+      message: message
+    });
+});

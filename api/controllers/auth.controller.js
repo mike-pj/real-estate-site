@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import bcryptjs from 'bcryptjs';
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   // console.log(req.body);
 // status(201) is for creation
 // after status below check data base if user was created
@@ -19,7 +19,8 @@ export const signup = async (req, res) => {
       res.status(201).json({ message: "User signed up successfully!"})
 
     } catch (error) {
-      res.status(500).json({ message: "Error signing up user", error })
+      // res.status(500).json({ message: "Error signing up user", error })
+      next(error); 
     }
 };
    
