@@ -1,18 +1,27 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
-export default function SignUp() {
+export default function SignIn() {
 
   const [formData, setFormData] = useState({})
 
-  //take care of error
-  const [error, setError] = useState(null)
+  //This below is replaced by global state from redux
+  // //take care of error
+  // const [error, setError] = useState(null)
 
-  //take care of loading state
-  const [loading, setLoading] = useState(false)
+  // //take care of loading state
+  // const [loading, setLoading] = useState(false)
+
+  //using global state from redux
+  const { loading, error } = useSelector((state) => state.user);
 
   //to navigate to another page authomatically
   const navigate = useNavigate();
+
+  //dispatch function from redux
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({
@@ -23,13 +32,39 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      setLoading(true);
+    // try {
+    //   setLoading(true);
 
-      //now we fetch our res from the api
-      // we use a proxy in other not to use http://localhost:5173 all the time
-      // we go to the vite.config.js to set the proxy
-      // after we come back here and set the response to JSON i.e the formData
+    //   //now we fetch our res from the api
+    //   // we use a proxy in other not to use http://localhost:5173 all the time
+    //   // we go to the vite.config.js to set the proxy
+    //   // after we come back here and set the response to JSON i.e the formData
+    //   const res = await fetch("/api/auth/signin",
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify(formData),
+    //     }
+    //   );
+    //   const data = await res.json();
+    //   if (data.success === false) {
+    //     setError(data.message);
+    //     setLoading(false);
+    //     return;
+    //   }
+    //   setLoading(false);
+    //   setError(null);
+    //   navigate("/");
+    // } catch (error) {
+    //   setLoading(false);
+    //   setError(error.message);
+    // }
+
+    try {
+      //using dispatch
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin",
         {
           method: "POST",
@@ -41,18 +76,14 @@ export default function SignUp() {
       );
       const data = await res.json();
       if (data.success === false) {
-        setError(data.message);
-        setLoading(false);
+        dispatch(signInFailure(data.message));
         return;
       }
-      setLoading(false);
-      setError(null);
+      dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
-      setLoading(false);
-      setError(error.message);
+      dispatch(signInFailure(error.message));
     }
-
 
   }
 
